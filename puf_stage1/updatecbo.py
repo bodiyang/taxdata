@@ -109,7 +109,7 @@ def update_econproj(url, baseline, text_args):
     rev_url = "".join([cbo_pre_url, rev_file_url])
 
     econprojections = divs[8]
-    assert "10-Year Economic Projections" in econprojections.text
+    assert "Economic Projections" in econprojections.text
     latest_econprojections = econprojections.find("div.views-col.col-1")[0]
     econ_link = latest_econprojections.find("a")[0]
     _cbo_report = datetime.strptime(econ_link.text, "%b %Y")
@@ -127,24 +127,24 @@ def update_econproj(url, baseline, text_args):
         # extract values for needed rows in the excel file
         # some variables have a missing value in the multi-index. Use iloc
         # to extract needed variables from them.
-        gdp = econ_proj.loc["Output"].loc["Gross Domestic Product (GDP)"].iloc[0]
+        gdp = econ_proj.loc["Gross domestic product (GDP)"].iloc[0]
         income = econ_proj.loc["Income"]
-        tpy = income.loc["Income, Personal"].iloc[0]
-        wages = income.loc["Wages and Salaries"].iloc[0]
+        tpy = econ_proj.loc["Income, personal"].iloc[0]
+        wages = econ_proj.loc["Wages and salaries"].iloc[0]
         billions = "Billions of dollars"
         var = "Proprietors' income, nonfarm, with IVA & CCAdj"
-        schc = income.loc["Nonwage Income"].loc[var].loc[billions]
+        schc = econ_proj.loc[var].iloc[0]
         var = "Proprietors' income, farm, with IVA & CCAdj"
-        schf = income.loc["Nonwage Income"].loc[var].loc[billions]
+        schf = econ_proj.loc[var].iloc[0]
         var = "Interest income, personal"
-        ints = income.loc["Nonwage Income"].loc[var].loc[billions]
+        ints = econ_proj.loc[var].iloc[0]
         var = "Dividend income, personal"
-        divs = income.loc["Nonwage Income"].loc[var].loc[billions]
+        divs = econ_proj.loc[var].iloc[0]
         var = "Income, rental, with CCAdj"
-        rents = income.loc["Nonwage Income"].loc[var].loc[billions]
-        book = income.loc["Profits, Corporate, With IVA & CCAdj"].iloc[0]
-        var = "Consumer Price Index, All Urban Consumers (CPI-U)"
-        cpiu = econ_proj.loc["Prices"].loc[var].iloc[0]
+        rents = econ_proj.loc[var].iloc[0] 
+        book = econ_proj.loc["Profits, corporate, with IVA & CCAdj"].iloc[0]
+        var = "Consumer price index, all urban consumers (CPI-U)"
+        cpiu = econ_proj.loc[var].iloc[0]
         var_list = [gdp, tpy, wages, schc, schf, ints, divs, rents, book, cpiu]
         var_names = [
             "GDP",
@@ -191,10 +191,10 @@ def update_econproj(url, baseline, text_args):
             header=[0, 1],
         )
         cg_proj.index = cg_proj[cg_proj.columns[0]]
-        var = "Capital Gains Realizationsa"
+        var = "Capital gains realizationsa"
         # increase the CBO final year to (the last year + 1) for each update.
-        # e.g. when the CBO final year from CBO is 2033, make the update as range(2017,2034)
-        cgns = cg_proj[var]["Billions of Dollars"].loc[list(range(2017, 2034))]
+        # e.g. when the CBO final year from CBO is 2033, make the update as range(2017,2035+1)
+        cgns = cg_proj[var]["Billions of dollars"].loc[list(range(2017, 2036))]
         var_list = [cgns]
         var_names = ["CGNS"]
         df = pd.DataFrame(var_list, index=var_names).round(1)
@@ -316,7 +316,7 @@ def update_rets(url, baseline, text_args):
             spreadsheet_url = link
             break
     data = pd.read_excel(spreadsheet_url, sheet_name="1B-BOD", index_col=0, header=2)
-    projections = data.loc["Forms 1040, 1040-SR, and 1040-SP, Total"]
+    projections = data.loc["Forms 1040 and 1040-SR, Total"]
     projections /= 1_000_000  # convert units
     pct_change = projections.pct_change() + 1
     # extrapolate out to final year of other CBO projections
@@ -361,7 +361,8 @@ def update_ucomp(url, baseline, text_args):
     for link in links:
         if "unemployment" in link.lower() and link.endswith("xlsx"):
             date = re.search(r"20\d\d-\d\d", link).group()
-            ucomp_links.append(link)
+            doc_link = "https://www.cbo.gov" + link
+            ucomp_links.append(doc_link)
             ucomp_years.append(datetime.strptime(date, "%Y-%m"))
     latest_year = max(ucomp_years)
     ucomp_url = ucomp_links[ucomp_years.index(latest_year)]
@@ -372,11 +373,11 @@ def update_ucomp(url, baseline, text_args):
     elif report == "February 2021":
         print("Latest data is from pandemic. Enter by hand")
         return baseline, text_args
-    data = pd.read_excel(ucomp_url, skiprows=3, index_col=0, thousands=",")
+    data = pd.read_excel(ucomp_url, engine="openpyxl", sheet_name="UI and TAA_01-2025", skiprows=7, index_col=0, thousands=",").dropna()
     try:
-        benefits = data.loc["Budget Authority"].dropna().astype(int) / 1000
+        benefits = data.loc["Regular Benefits"].dropna().astype(int) / 1000 + data.loc["Extended Benefits"].dropna().astype(int) / 1000
     except KeyError:
-        benefits = data.loc["Budget Authority"].dropna().astype(int) / 1000
+        benefits = data.loc["Regular Benefits"].dropna().astype(int) / 1000 + data.loc["Extended Benefits"].dropna().astype(int) / 1000
     benefits = benefits.round(1)
     df = pd.DataFrame(benefits).transpose()
     df.index = ["UCOMP"]
