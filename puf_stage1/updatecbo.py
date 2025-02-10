@@ -5,6 +5,7 @@ that format of the websites, spreadsheets, and API we access don't change. If
 there is a bug, it's probably because that assumption no longer holds true.
 When this happens, modify the code as needed to account for this.
 """
+
 import re
 import requests
 import pandas as pd
@@ -141,7 +142,7 @@ def update_econproj(url, baseline, text_args):
         var = "Dividend income, personal"
         divs = econ_proj.loc[var].iloc[0]
         var = "Income, rental, with CCAdj"
-        rents = econ_proj.loc[var].iloc[0] 
+        rents = econ_proj.loc[var].iloc[0]
         book = econ_proj.loc["Profits, corporate, with IVA & CCAdj"].iloc[0]
         var = "Consumer price index, all urban consumers (CPI-U)"
         cpiu = econ_proj.loc[var].iloc[0]
@@ -373,11 +374,24 @@ def update_ucomp(url, baseline, text_args):
     elif report == "February 2021":
         print("Latest data is from pandemic. Enter by hand")
         return baseline, text_args
-    data = pd.read_excel(ucomp_url, engine="openpyxl", sheet_name="UI and TAA_01-2025", skiprows=7, index_col=0, thousands=",").dropna()
+    data = pd.read_excel(
+        ucomp_url,
+        engine="openpyxl",
+        sheet_name="UI and TAA_01-2025",
+        skiprows=7,
+        index_col=0,
+        thousands=",",
+    ).dropna()
     try:
-        benefits = data.loc["Regular Benefits"].dropna().astype(int) / 1000 + data.loc["Extended Benefits"].dropna().astype(int) / 1000
+        benefits = (
+            data.loc["Regular Benefits"].dropna().astype(int) / 1000
+            + data.loc["Extended Benefits"].dropna().astype(int) / 1000
+        )
     except KeyError:
-        benefits = data.loc["Regular Benefits"].dropna().astype(int) / 1000 + data.loc["Extended Benefits"].dropna().astype(int) / 1000
+        benefits = (
+            data.loc["Regular Benefits"].dropna().astype(int) / 1000
+            + data.loc["Extended Benefits"].dropna().astype(int) / 1000
+        )
     benefits = benefits.round(1)
     df = pd.DataFrame(benefits).transpose()
     df.index = ["UCOMP"]
