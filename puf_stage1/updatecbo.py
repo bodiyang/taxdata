@@ -239,6 +239,7 @@ def update_socsec(url, baseline, text_args):
     # in the first drop down and adding one.
     selector = r.html.find("select#yh1")[0]
     latest_yr = max([int(yr) for yr in selector.text.split()]) + 1
+    latest_yr = 2024
     report = f"{latest_yr} Report"
     if report == text_args["socsec_cur_report"]:
         print("\tNo new data since last update")
@@ -249,7 +250,7 @@ def update_socsec(url, baseline, text_args):
     html = pd.read_html(socsec_url, match=match_txt)[0]
     # merge the columns with years and data into one
     sub_data = pd.concat(
-        [html["Fiscal year", "Fiscal year.1"], html["Cost", "Sched-uled benefits"]],
+        [html["Fiscal year", "Fiscal year.1"], html["Cost", "Scheduled benefits"]],
         axis=1,
     )
     sub_data.columns = ["year", "cost"]

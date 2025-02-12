@@ -98,7 +98,7 @@ Table VI.C4. Operations of the OASI Trust Fund, Table VI.C4, Column:
 
 Previous: [2023 Report](https://www.ssa.gov/oact/TR/2023/VI_C_SRfyproj.html)
 
-Current: [2023 Report](https://www.ssa.gov/oact/TR/2023/VI_C_SRfyproj.html)
+Current: [2024 Report](https://www.ssa.gov/oact/TR/2024/VI_C_SRfyproj.html)
 
 Projections are taken directly from the `Scheduled Benefits: Intermediate Level`
 column of this table.
@@ -108,7 +108,7 @@ column of this table.
 Source: [BLS Database](http://data.bls.gov/timeseries/CUSR0000SAM?output_view=pct_1mth)
 
 Series ID: CUSR0000SAM
-Access Date: February 06 2025
+Access Date: 
 
 Manual Instructions:
 
