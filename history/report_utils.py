@@ -626,10 +626,10 @@ def CBO_projections(rev_proj):
         "Calculation of adjusted gross income (AGI)"
     ].loc["Taxable pensions and annuities and IRA distributions"]
     ssb = rev_proj.loc["Calculation of adjusted gross income (AGI)"].loc[
-        "Taxable Social Security benefits                  "
+        "Taxable Social Security benefitsc                  "
     ]
     other_inc = rev_proj.loc["Calculation of adjusted gross income (AGI)"].loc[
-        "All other sources of incomec"
+        "All other sources of incomed"
     ]
     total_inc = rev_proj.loc["Calculation of adjusted gross income (AGI)"].loc[
         "Total income"
@@ -649,40 +649,40 @@ def CBO_projections(rev_proj):
         "Subtract standard deduction (non-itemizers only)"
     ]
     sub_tot_item = rev_proj.loc["Calculation of taxable income"].loc[
-        "Subtract total itemized deductions (itemizers only) after limitsd"
+        "Subtract total itemized deductions (itemizers only) after limitse"
     ]
     sub_qbid = rev_proj.loc["Calculation of taxable income"].loc[
         "Subtract qualified business income deduction"
     ]
     sub_tot_expt = rev_proj.loc["Calculation of taxable income"].loc[
-        "Total exemptions and deductions after limitse"
+        "Total exemptions and deductions after limitsf"
     ]
     taxable_inc = (
-        rev_proj.loc["Calculation of taxable income"].loc["Taxable incomef"].iloc[0]
+        rev_proj.loc["Calculation of taxable income"].loc["Taxable incomeg"].iloc[0]
     )
     tot_inctax = rev_proj.loc["Calculation of income tax liability"].loc[
         "Total income tax (including AMT) before credits"
     ]
     tot_cdt = rev_proj.loc["Calculation of income tax liability"].loc[
-        "Total credits (refundable and nonrefundable)i"
+        "Total credits (refundable and nonrefundable) j"
     ]
     inctax_af_credit = rev_proj.loc["Calculation of income tax liability"].loc[
-        "Income tax after creditsj"
+        "Income tax after creditsk"
     ]
-    Top1p = rev_proj.loc["Shares of AGI by income group (percent)o"].loc[
+    Top1p = rev_proj.loc["Shares of AGI by income group (percent)p"].loc[
         "Top 1 percent"
     ]
-    Top5p = rev_proj.loc["Shares of AGI by income group (percent)o"].loc[
+    Top5p = rev_proj.loc["Shares of AGI by income group (percent)p"].loc[
         "Top 5 percent"
     ]
-    Top10p = rev_proj.loc["Shares of AGI by income group (percent)o"].loc[
+    Top10p = rev_proj.loc["Shares of AGI by income group (percent)p"].loc[
         "Top 10 percent"
     ]
-    Top25p = rev_proj.loc["Shares of AGI by income group (percent)o"].loc[
+    Top25p = rev_proj.loc["Shares of AGI by income group (percent)p"].loc[
         "Top 25 percent"
     ]
     Top50p = (
-        rev_proj.loc["Shares of AGI by income group (percent)o"]
+        rev_proj.loc["Shares of AGI by income group (percent)p"]
         .loc["Top 50 percent"]
         .iloc[0]
     )
