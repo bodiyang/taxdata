@@ -18,7 +18,7 @@ TABLE14COLS = [
         "SS_return",
         "Social security benefits",
         "Total [1]",
-        "Unnamed: 69_level_2",
+        "Unnamed: 67_level_2",
         "Number of\nreturns",
     ),
     ("INTS", "Taxable interest", "Unnamed: 8_level_1", "Unnamed: 8_level_2", "Amount"),
@@ -38,7 +38,7 @@ TABLE14COLS = [
         "Unnamed: 26_level_2",
         "Amount",
     ),
-    ("Pension", "Pensions and\nannuities", "Unnamed: 38_level_1", "Taxable", "Amount"),
+    ("Pension", "Pensions and annuities", "Unnamed: 38_level_1", "Taxable", "Amount"),
     (
         "SCHEI",
         "Total rental and royalty",
@@ -104,7 +104,8 @@ def update_soi(year, datapath, wage_indicies, file_):
     file_: "cps" or "puf"
     """
     single, married, hoh = table12(year, datapath)
-    dep_return = table23(year, datapath)
+    # dep_return = table23(year, datapath)
+    dep_return = 0
     ipd = table21(year, datapath)
     nonwages, wages = table14(year, wage_indicies, datapath)
     values = [
@@ -142,8 +143,9 @@ def table12(year, datapath):
         allreturns = "All returns, total"
         return data[col][nreturns].loc[allreturns].values[0].astype(int)
 
-    file_ = Path(datapath, f"{str(year)[-2:]:}in12ms.xls")
-    data = pd.read_excel(file_, header=[2, 3, 4], index_col=0)
+    file_ = f"{str(year)[-2:]:}in12ms.xls"
+    print(file_)
+    data = pd.read_excel(Path(datapath, file_), header=[2, 3, 4], index_col=0)
     single = numfilers(data, "Returns of single persons")
     col = "Returns of married persons filing jointly and returns of surviving spouses"
     married1 = numfilers(data, col)
@@ -157,7 +159,7 @@ def table23(year, datapath):
     """
     Returns number of dependent exemption from SOI table 2.3
     """
-    file_ = f"{str(year)[-2:]}in23ar.xls"
+    file_ = f"{str(year)[-2:]:}in23ar.xls"
     data = pd.read_excel(Path(datapath, file_), header=[2, 3, 4], index_col=0)
     col = "Exemptions for dependents"
     nexemp = "Number\nof\nexemptions"
@@ -173,13 +175,15 @@ def table21(year, datapath):
     year: integer representing the year of the table
     datapath: path to the directory holding the SOI files
     """
-    file_ = f"{str(year)[-2:]}in21id.xls"
+    file_ = f"{str(year)}in21id.xls"
     data = pd.read_excel(Path(datapath, file_), header=[2, 3, 4, 5, 6], index_col=0)
     itemded = "Itemized deductions"
     ipd = "Interest paid deduction"
-    un = "Unnamed: 83_level_3"
+    un = "Unnamed: 89_level_3"
     if year == "2017":
         un = "Unnamed: 85_level_3"
+    if year == "2019":
+        un = "Unnamed: 91_level_3"
     allrets = "All returns, total"
     return data[itemded][ipd]["Total"][un]["Amount"].loc[allrets].astype(int)
 
@@ -227,7 +231,7 @@ def table14(year, wage_indicies, datapath):
     datapath: path to directory where the SOI data is stored
     """
     data = pd.read_excel(
-        Path(datapath, f"{str(year)[-2:]}in14ar.xls"), header=[2, 3, 4, 5], index_col=0
+        Path(datapath, f"{str(year)[-2:]:}in14ar.xls"), header=[2, 3, 4, 5], index_col=0
     )
     data = data.iloc[:21]
     nonwages = table14_nonwages(data, TABLE14COLS)
