@@ -197,6 +197,10 @@ def table14_nonwages(data, cols):
     cols: See TABLE14COLS
     """
     values = defaultdict(int)
+    if year == "18":
+        print("recheck the value by hand")
+        values = []
+        return values
     for col in cols:
         val = data[col[1:]].loc["All returns, total"].astype(int)
         values[col[0]] += val
