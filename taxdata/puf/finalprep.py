@@ -57,6 +57,9 @@ def finalprep(data):
     # - Replace e20500 with g20500:
     data = replace_20500(data)
 
+    # - Impute PT_binc_w2_wages:
+    data = impute_PT_binc_w2_wages(data)
+
     data["s006"] = data["matched_weight"] * 100
 
     # - Remove variables not expected by Tax-Calculator:
@@ -323,3 +326,17 @@ def replace_20500(data):
     )
     data["g20500"] = np.int_(gross.round())
     return data
+
+
+def impute_PT_binc_w2_wages(data):
+    '''
+    Imputation for PT_binc_w2_wages variable.
+    Assume the share of W-2 wages to be a fixed percentage, w2_ratio, of the qualified business income.
+    The value of w2_ratio is taken as 0.2 here to hit the target of total qbided. This value can be changed.
+    '''
+    w2_ratio = 0.2
+    qbinc = data["e00900"] + data["e26270"] + data["e02100"] + data["e27200"]
+    data["PT_binc_w2_wages"] = w2_ratio * qbinc
+    return data
+
+
